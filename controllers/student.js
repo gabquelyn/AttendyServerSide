@@ -70,7 +70,6 @@ exports.postDetails = (req, res, next) => {
 exports.createClass = (req, res, next) => {
   const courseCode = req.body.code;
   const title = req.body.title;
-  let classData
   const userId = '63b74b0cf1f114075e1ab10b' //will be provided by the auth middleware.
   const newClass = new classModel({
     code: courseCode,
@@ -79,17 +78,8 @@ exports.createClass = (req, res, next) => {
     creatorId: userId,
   })
   newClass.save().then(result => {
-    classData = result
-   return user.findById(userId)
-  }).then(userDoc => {
-    if(!userDoc){
-      const error = newError("User seems to not exist")
-      error.status = 404;
-      throw error
-    }
-    userDoc.addClass(classData._id)
-  }).then(result => {
-    
+   const createdClass = result
+   return createdClass.addToClassAttended(userId);
   })
   .then(result => {
     res.status(201).json({message: "Created and joined class Successfully", data: classData, result})

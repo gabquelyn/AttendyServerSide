@@ -22,7 +22,7 @@ const classSchema = new Schema(
   { timestamps: true }
 );
 
-classSchema.methods.addUser = function(userId){
+classSchema.methods.addToClassAttended = function(userId){
   const existing = this.attended.find(id => id = userId);
   if(existing){
     return
@@ -30,6 +30,15 @@ classSchema.methods.addUser = function(userId){
   const updatedAttended = [...this.attended, userId]
   this.attended = updatedAttended
   return this.save();
+}
+
+classSchema.methods.addToPending = function(userId){
+  const ifExists = this.pending.find(id => id = userId);
+  if(ifExists){
+    return
+  }
+  const updatedPending = [...this.pending, userId]
+  this.pending = updatedPending;
 }
 
 module.exports = model("Class", classSchema);

@@ -19,28 +19,11 @@ const userSchema = new Schema(
       lastname: String,
       matricNumber: String
     },
-    classes: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Class",
-        required: true,
-      }
-    ],
     recoveryToken: {
       type: Number,
     },
   },
   { timestamps: true }
 );
-
-userSchema.methods.addClass = function(classId){
-  const existing = this.classes.find(id => id === classId);
-  if(existing){
-    return
-  }
-  const updatedClasses = [...this.classes, classId.toString()]
-  this.classes = updatedClasses;
-  return this.save();
-}
 
 module.exports = model("User", userSchema);
