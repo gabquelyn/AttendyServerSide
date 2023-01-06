@@ -31,6 +31,7 @@ exports.signup = (req, res, next) => {
       const user = new User({
         email,
         password: hashedPassword,
+        isAdmin: false
       });
       return user.save();
     })
@@ -63,7 +64,7 @@ if(!errors.isEmpty()){
   let loadedUser;
   const email = req.body.email;
   const password = req.body.password;
-  const rememberMe = req.body.remember
+  // const rememberMe = req.body.remember (BRB to set the remember me feature)
   user
     .findOne({ email: email })
     .then((userDoc) => {
@@ -90,7 +91,6 @@ if(!errors.isEmpty()){
         `${process.env.JWT_SECRET_PHRASE}`,
         { expiresIn: expire }
       );
-        console.log(token)
       res.status(200).json({token:token, userId: loadedUser._id.toString(), expires: expire})
     })
     .catch((error) => {

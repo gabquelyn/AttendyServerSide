@@ -1,28 +1,46 @@
-const {Schema, model} = require("mongoose")
+const { Schema, model } = require("mongoose");
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     email: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     password: {
-        type: String,
+      type: String,
+      required: true,
+    },
+    isAdmin: {
+        type: Schema.Types.Boolean,
         required: true
     },
-    firstname: {
-        type: String,
+    mainDetails: {
+      firstname: String,
+      lastname: String,
+      matricNumber: String
     },
-    lastname: {
-        type: String,
+    classes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Class",
+        required: true,
+      }
+    ],
+    recoveryToken: {
+      type: Number,
     },
-    matricNum: {
-        type: String,
-    },
-    recoveryToken : {
-        type: Number
-    },
-},
-{timestamps: true}
-)
+  },
+  { timestamps: true }
+);
 
-module.exports = model('User', userSchema);
+userSchema.methods.addClass = function(classId){
+  const existing = this.classes.find(id => id === classId);
+  if(existing){
+    return
+  }
+  const updatedClasses = [...this.classes, classId.toString()]
+  this.classes = updatedClasses;
+  return this.save();
+}
+
+module.exports = model("User", userSchema);
